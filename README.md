@@ -2,43 +2,136 @@
 
 ## Architecture
 
-This project contains a lightweight Python-based AI coding agent that explores a repository, creates an execution plan, and applies product-oriented improvements to an existing Node.js application.
+This project contains a lightweight Python-based AI coding agent that explores an unfamiliar repository, identifies relevant files, creates an execution plan, and implements a product-oriented enhancement in an existing Node.js application.
 
-- Python 3.11
-- OpenRouter / OpenAI compatible SDK
-- Filesystem-based repository exploration
+**Components**
+
+- `explorer.py` – scans the repository and identifies relevant JavaScript files
+- `planner.py` – generates a brief execution plan
+- `summarizer.py` – summarizes the planned work
+- `main.py` – orchestrates the workflow
+
+The target application remains a Node.js + Express + MongoDB application and is not rewritten in Python.
+
+---
 
 ## Agent Workflow
 
-1. Explore the repository
-2. Identify relevant files
-3. Create an execution plan
+1. Explore the repository structure
+2. Identify relevant models, controllers, routes, and configuration files
+3. Create a brief execution plan
 4. Modify the codebase
 5. Summarize the changes
 
+---
+
 ## Repository Exploration
 
-The agent recursively scans JavaScript files and ignores `node_modules`. It identifies models, controllers, routes, and server configuration files automatically.
+The agent recursively scans `.js` files while ignoring `node_modules`.
+
+It automatically discovered the key files:
+
+- `app/models/note.model.js`
+- `app/controllers/note.controller.js`
+- `app/routes/note.routes.js`
+- `server.js`
+
+---
 
 ## Product Decision
 
-From the request:
+Given the request:
 
 > Improve the application so users can better organise and search their notes.
 
-The agent implemented:
+The implementation chosen was:
 
-- Tags for organizing notes
-- Search across title, content, and tags
-- Filter by tag
+- **Tags for note organization**
+- **Search across title, content, and tags**
+- **Filter notes by tag**
 
-## Modified Repository
+This provides a meaningful improvement while preserving the existing API structure and functionality.
 
-Add the GitHub URL of your modified repository here.
+---
+
+## Changes Made
+
+### Note model
+
+Added:
+
+```js
+tags: {
+    type: [String],
+    default: []
+}
+```
+
+### Create note API
+
+Accepts an optional `tags` array.
+
+### Update note API
+
+Allows updating tags along with title and content.
+
+### Search
+
+Added query parameter:
+
+```bash
+GET /notes?q=react
+```
+
+Searches title, content, and tags.
+
+### Tag filter
+
+Added query parameter:
+
+```bash
+GET /notes?tag=interview
+```
+
+Returns notes containing the specified tag.
+
+---
+
+## Compatibility Fix
+
+The original project used an older Mongoose version that was incompatible with the local MongoDB server. Mongoose was upgraded to version 8 and the connection code was updated accordingly.
+
+---
 
 ## Assumptions and Trade-offs
 
 - Regex-based search was used for simplicity and compatibility.
-- Existing APIs remain backward compatible.
+- Existing endpoints remain backward compatible.
 - Notes without tags continue to work unchanged.
-- The focus was on a small, production-safe enhancement within the time limit.
+- The implementation focuses on a small, production-safe enhancement that fits within the 2–3 hour time limit.
+
+---
+
+## How to Run
+
+### AI Agent
+
+```bash
+pip install -r requirements.txt
+python main.py
+```
+
+### Enhanced Application
+
+```bash
+cd node-easy-notes-app
+npm install
+npm start
+```
+
+---
+
+## Repositories
+
+- AI Agent: https://github.com/IsravelTECH/ai-note-agent
+- Enhanced App: https://github.com/IsravelTECH/node-easy-notes-app-enhanced
